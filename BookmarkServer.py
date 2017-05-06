@@ -19,6 +19,7 @@
 #
 import http.server
 import requests
+import os
 from urllib.parse import unquote, parse_qs
 
 memory = {}
@@ -50,7 +51,6 @@ def CheckURI(uri, timeout=5):
     False if that GET request returns any other response, or doesn't return
     (i.e. times out).
     '''
-    # 1. Write this function.  Delete the following line.
     try:
         response = requests.get(uri, timeout=timeout)
         return response.status_code == 200
@@ -113,6 +113,7 @@ class Shortener(http.server.BaseHTTPRequestHandler):
                 "Couldn't fetch URI '{}'. Sorry!".format(longuri).encode())
 
 if __name__ == '__main__':
-    server_address = ('', 8000)
+    port = int(os.environ.get('PORT', 8000))   # Use PORT if it's there.
+    server_address = ('', port)
     httpd = http.server.HTTPServer(server_address, Shortener)
     httpd.serve_forever()
